@@ -12,7 +12,6 @@ class Quest(db.Model):
     """
     __tablename__ = 'coding_quests'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    quest_id = db.Column(db.String(255), unique=True, nullable=True)
     language = db.Column(db.String(50), nullable=False)
     difficulty = db.Column(db.String(50), nullable=False)
     quest_name = db.Column(db.String(255), nullable=False)
@@ -22,13 +21,38 @@ class Quest(db.Model):
     last_modified = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
     condition = db.Column(db.Text, nullable=False)
     function_template = db.Column(db.Text, nullable=False)
-    unit_tests = db.Column(db.Text, nullable=False)
-    test_inputs = db.Column(db.Text, nullable=True)
-    test_outputs = db.Column(db.Text, nullable=True)
+    
+    # Quest inputs, where input_0 is the null test
+    input_0 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_1 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_2 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_3 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_4 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_5 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_6 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_7 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_8 = db.Column(db.Text, nullable=True)  # Input for the quest
+    input_9 = db.Column(db.Text, nullable=True)  # Input for the quest
+    
+    # Quest outputs, where output_0 is the null test
+    output_0 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_1 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_2 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_3 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_4 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_5 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_6 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_7 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_8 = db.Column(db.Text, nullable=True)  # Output for the quest
+    output_9 = db.Column(db.Text, nullable=True)  # Output for the quest
+    
+    example_solution = db.Column(db.Text, nullable=True)  # Example solution for the quest
     xp = db.Column(db.Enum('30', '60', '100', name='xp_points'), nullable=False)
     type = db.Column(db.String(20), nullable=True)
     is_active = db.Column(db.Boolean, default=True, nullable=True)
     quest_comments = db.Column(JSON, default = [], nullable=True) # Store comments for the submited quests
+    
+    
     
     def __init__(self, language, difficulty, quest_name, quest_author, condition, function_template, unit_tests, test_inputs, test_outputs, xp, type):
         self.language = language
