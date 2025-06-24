@@ -145,6 +145,12 @@ def open_edit_quest(quest_id):
         quest = result.fetchone()
         if not quest:
             return jsonify({"error": "Quest not found"}), 404
+        
+        print(quest)
+        # Collect dynamic inputs and outputs (from input_0 to input_9 and output_0 to output_9)
+        inputs = [getattr(quest, f'input_{i}') for i in range(10) if getattr(quest, f'input_{i}') is not None]
+        outputs = [getattr(quest, f'output_{i}') for i in range(10) if getattr(quest, f'output_{i}') is not None]
+        
         return jsonify({
             "quest_id": quest.id,
             "language": quest.language,
@@ -152,17 +158,19 @@ def open_edit_quest(quest_id):
             "quest_name": quest.quest_name,
             "solved_times": quest.solved_times,
             "quest_author": quest.quest_author,
-            "date_added": quest.date_added.isoformat(),
-            "last_modified": quest.last_modified.isoformat(),
+            "date_added": quest.date_added.isoformat() if quest.date_added else None,
+            "last_modified": quest.last_modified.isoformat() if quest.last_modified else None,
             "condition": quest.condition,
-            "test_inputs": quest.test_inputs,
-            "test_outputs": quest.test_outputs,
             "function_template": quest.function_template,
+            "inputs": inputs,
+            "outputs": outputs,
+            "example_solution": quest.example_solution,
             "xp": quest.xp,
-            "type": quest.type,
-            "unit_tests": quest.unit_tests
+            "type": quest.type
         })
+        
     except Exception as e:
+        print("Error fetching quest for editing:", e)
         return jsonify({"error": str(e)}), 500
 
 # Edit a quest (as Admin) by its ID
@@ -187,22 +195,28 @@ def edit_quest(quest_id):
         if not quest:
             return jsonify({"error": "Quest not found"}), 404
 
-        # Update the quest attributes
+        # Update basic attributes
         quest.language = data.get('language', quest.language)
         quest.difficulty = data.get('difficulty', quest.difficulty)
         quest.quest_name = data.get('quest_name', quest.quest_name)
         quest.condition = data.get('condition', quest.condition)
-        quest.function_template = data.get('function_template', quest.function_template)
-        quest.unit_tests = data.get('unit_tests', quest.unit_tests)
-        quest.test_inputs = data.get('test_inputs', quest.test_inputs)
-        quest.test_outputs = data.get('test_outputs', quest.test_outputs)
+        quest.example_solution = data.get('example_solution', quest.example_solution)
         quest.xp = "30" if quest.difficulty == "Easy" else "60" if quest.difficulty == "Medium" else "100"
         quest.type = data.get('type', quest.type)
         quest.last_modified = db.func.now()
-        # Commit the changes to the database
-        db.session.add(quest)
+
+        # Update inputs and outputs (input_0 to input_9, output_0 to output_9)
+        for i in range(10):
+            input_key = f"input_{i}"
+            output_key = f"output_{i}"
+            if input_key in data:
+                setattr(quest, input_key, data[input_key])
+            if output_key in data:
+                setattr(quest, output_key, data[output_key])
+
         db.session.commit()
         return jsonify({"message": "Quest updated successfully"}), 200
+    
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
