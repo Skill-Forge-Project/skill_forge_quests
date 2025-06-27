@@ -23,7 +23,7 @@ def update_xp(user_id, quest_xp):
                 "message": response.text
             }), response.status_code   
     except Exception as e:
-        print("Error communicating with users service:", str(e))
+        logger.exception("Error communicating with users service")
         return jsonify({
             "error": "Internal server error",
             "message": "An internal error has occurred."
