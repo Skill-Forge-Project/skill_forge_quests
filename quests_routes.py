@@ -124,7 +124,7 @@ def add_new_quest():
         return jsonify({"message": "Quest added successfully", "quest_id": new_quest.quest_id}), 201
     except Exception as e:
         db.session.rollback()
-        app.logger.error(f"An error occurred while adding a new quest: {e}")
+        app.logger.exception(f"An error occurred while adding a new quest: {e}")
         return jsonify({"error": "An internal error has occurred"}), 500
 
 # Open a quest (as Admin)
