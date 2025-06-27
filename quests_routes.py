@@ -125,7 +125,7 @@ def add_new_quest():
     except Exception as e:
         db.session.rollback()
         app.logger.exception(f"An error occurred while adding a new quest: {e}")
-        return jsonify({"error": "An internal error has occurred"}), 500
+        return jsonify({"error": GENERIC_ERROR_MESSAGE}), 500
 
 # Open a quest (as Admin)
 @quests_bp.route('/edit_quest/<quest_id>', methods=['GET'])
