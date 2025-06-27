@@ -246,6 +246,6 @@ def report_quest(quest_id):
         return jsonify({"message": "Quest reported successfully"}), 201
     except Exception as e:
         db.session.rollback()
-        app.logger.error(f"Error reporting quest: {e}")
+        app.logger.exception(f"Error reporting quest {quest_id}")
         return jsonify({"error": "An internal error occurred"}), 500
     
