@@ -169,7 +169,7 @@ def open_edit_quest(quest_id):
         })
         
     except Exception as e:
-        app.logger.error(f"An error occurred: {e}")
+        app.logger.exception(f"An error occurred while fetching quest with ID {quest_id}: {e}")
         return jsonify({"error": "An internal error has occurred"}), 500
 
 # Edit a quest (as Admin) by its ID
