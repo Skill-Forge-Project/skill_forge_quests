@@ -60,7 +60,6 @@ def get_comments_by_quest(quest_id):
         return jsonify(comments), 200
 
     except Exception as e:
-        print(e)
         return jsonify({"error": str(e)}), 500
 
 @comments_bp.route('/comments/<quest_id>', methods=['POST'])
@@ -85,5 +84,4 @@ def add_comment(quest_id):
 
         return jsonify({"message": "Comment added successfully"}), 201
     except Exception as e:
-        print(e)
         return jsonify({"error": str(e)}), 500

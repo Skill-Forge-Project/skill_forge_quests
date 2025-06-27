@@ -13,20 +13,18 @@ def update_xp(user_id, quest_xp):
         )
 
         if response.status_code == 200:
-            print("XP update successful:", response.json())
             return response.json()
         else:
-            print("XP update failed:", response.status_code, response.text)
             return jsonify({
                 "error": "Failed to update XP",
                 "status_code": response.status_code,
                 "message": response.text
             }), response.status_code   
     except Exception as e:
-        print("Error communicating with users service:", str(e))
+        logger.exception("Error communicating with users service")
         return jsonify({
             "error": "Internal server error",
-            "message": str(e)
+            "message": "An internal error has occurred."
         }), 500
 
 

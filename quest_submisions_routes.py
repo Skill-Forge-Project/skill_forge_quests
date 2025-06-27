@@ -56,7 +56,7 @@ def quest_solution(quest_id):
             args = " ".join(item[0] for item in parsed if isinstance(item, list) and item)
             test_cases.append(args)
         except (json.JSONDecodeError, IndexError, TypeError) as e:
-            print(f"Invalid test input line: {line} → {e}")
+            raise ValueError(f"Invalid test case line: {line} → {e}")
 
     # Rework the expected results
     expected_results = []
@@ -65,7 +65,7 @@ def quest_solution(quest_id):
             parsed = json.loads(line)
             expected_results.append(parsed[0])  # ["text"] → "text"
         except (json.JSONDecodeError, IndexError, TypeError) as e:
-            print(f"Invalid expected output line: {line} → {e}")
+            raise ValueError(f"Invalid expected result line: {line} → {e}")
     
     # Hold all the results of the tests
     all_results = {}
