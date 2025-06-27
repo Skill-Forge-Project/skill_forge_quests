@@ -216,7 +216,8 @@ def edit_quest(quest_id):
     
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        app.logger.error(f"Error editing quest {quest_id}: {e}")
+        return jsonify({"error": "An internal error occurred"}), 500
 
 # Create reported quest
 @quests_bp.route('/report_quest/<quest_id>', methods=['POST'])
@@ -245,5 +246,6 @@ def report_quest(quest_id):
         return jsonify({"message": "Quest reported successfully"}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        app.logger.exception(f"Error reporting quest {quest_id}")
+        return jsonify({"error": "An internal error occurred"}), 500
     
