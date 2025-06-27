@@ -27,7 +27,6 @@ def get_quests():
         quests = [dict(row._mapping) for row in result.fetchall()]
         return jsonify(quests), 200
     except Exception as e:
-        import traceback
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "An internal error has occurred."}), 500
 
