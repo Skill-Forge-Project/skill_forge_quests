@@ -27,7 +27,8 @@ def get_quests():
         quests = [dict(row._mapping) for row in result.fetchall()]
         return jsonify(quests), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.error("An error occurred: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 # Get all quests filtered by language
 @quests_bp.route('/quests/<language>', methods=['GET'])
@@ -47,7 +48,8 @@ def get_quests_by_language(language):
         quests = [dict(row._mapping) for row in result.fetchall()]
         return jsonify(quests)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.error("An error occurred: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 # Open a specific quest by its ID
 @quests_bp.route('/quest/<quest_id>', methods=['GET'])
@@ -82,7 +84,8 @@ def open_quest(quest_id):
             "type": quest.type
             })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.error("An error occurred: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 # Create a new quest (as Admin)    
 @quests_bp.route('/quests', methods=['POST'])
