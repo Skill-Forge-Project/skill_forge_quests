@@ -34,5 +34,5 @@ def get_username_from_auth(user_id):
         if response.status_code == 200:
             return response.json().get("username", "Unknown")
     except Exception as e:
-        print(f"Error fetching username for user_id {user_id}: {e}")
+        return f"Error fetching username for user_id {user_id}: {e}"
     return "Unknown"
