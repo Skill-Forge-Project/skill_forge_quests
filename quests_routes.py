@@ -27,7 +27,6 @@ def get_quests():
         quests = [dict(row._mapping) for row in result.fetchall()]
         return jsonify(quests), 200
     except Exception as e:
-        print(e)
         return jsonify({"error": str(e)}), 500
 
 # Get all quests filtered by language
@@ -146,7 +145,6 @@ def open_edit_quest(quest_id):
         if not quest:
             return jsonify({"error": "Quest not found"}), 404
         
-        print(quest)
         # Collect dynamic inputs and outputs (from input_0 to input_9 and output_0 to output_9)
         inputs = [getattr(quest, f'input_{i}') for i in range(10) if getattr(quest, f'input_{i}') is not None]
         outputs = [getattr(quest, f'output_{i}') for i in range(10) if getattr(quest, f'output_{i}') is not None]
@@ -170,7 +168,6 @@ def open_edit_quest(quest_id):
         })
         
     except Exception as e:
-        print("Error fetching quest for editing:", e)
         return jsonify({"error": str(e)}), 500
 
 # Edit a quest (as Admin) by its ID
