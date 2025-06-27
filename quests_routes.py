@@ -48,8 +48,6 @@ def get_quests_by_language(language):
         quests = [dict(row._mapping) for row in result.fetchall()]
         return jsonify(quests)
     except Exception as e:
-        import traceback
-        app.logger.error(traceback.format_exc())
         return jsonify({"error": "An internal error has occurred."}), 500
 
 # Open a specific quest by its ID
@@ -85,8 +83,6 @@ def open_quest(quest_id):
             "type": quest.type
             })
     except Exception as e:
-        import traceback
-        app.logger.error(traceback.format_exc())
         return jsonify({"error": "An internal error has occurred."}), 500
 
 # Create a new quest (as Admin)    
