@@ -124,7 +124,8 @@ def add_new_quest():
         return jsonify({"message": "Quest added successfully", "quest_id": new_quest.quest_id}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        app.logger.error(f"An error occurred while adding a new quest: {e}")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 # Open a quest (as Admin)
 @quests_bp.route('/edit_quest/<quest_id>', methods=['GET'])
@@ -168,7 +169,8 @@ def open_edit_quest(quest_id):
         })
         
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        app.logger.error(f"An error occurred: {e}")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 # Edit a quest (as Admin) by its ID
 @quests_bp.route('/quests/<quest_id>', methods=['PUT'])
