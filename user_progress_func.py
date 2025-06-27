@@ -26,7 +26,7 @@ def update_xp(user_id, quest_xp):
         print("Error communicating with users service:", str(e))
         return jsonify({
             "error": "Internal server error",
-            "message": str(e)
+            "message": "An internal error has occurred."
         }), 500
 
 
