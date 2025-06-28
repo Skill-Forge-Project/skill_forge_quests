@@ -1,3 +1,4 @@
+import logging
 import os
 from flask import Flask
 from flask_cors import CORS
@@ -10,6 +11,16 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Set up logging
+    if not app.logger.handlers:
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        app.logger.addHandler(handler)
+        
+    app.logger.setLevel(logging.INFO)
 
     CORS(app, resources={r"/*": {"origins": "*"}})
     db.init_app(app)

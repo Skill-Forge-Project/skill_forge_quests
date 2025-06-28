@@ -1,15 +1,20 @@
-import os, requests
-from flask import Blueprint, request, jsonify, send_file
+import app
+import os, requests, traceback
+from flask import Blueprint, request, jsonify, current_app
 from extensions import db
 from services import token_required
 from sqlalchemy import text
 from models import Quest, ReportedQuest
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL")
+ADMIN_SERVICE_URL = os.getenv("ADMIN_SERVICE_URL")
 INTERNAL_SECRET = os.getenv("INTERNAL_SECRET")
+
+GENERIC_ERROR_MESSAGE = "An internal error has occurred."
 
 quests_bp = Blueprint('quests', __name__)
 
@@ -85,48 +90,90 @@ def open_quest(quest_id):
     except Exception as e:
         return jsonify({"error": "An internal error has occurred."}), 500
 
-# Create a new quest (as Admin)    
+# Add a new quest (as Admin)
 @quests_bp.route('/quests', methods=['POST'])
 @token_required
 def add_new_quest():
-    """Add a new quest to the database.
-
-    Returns:
-        JSON: Newly created quest
     """
-    data = request.get_json()
-    
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
+    Add a new quest to the database after verifying admin privileges.
+    """
     try:
-        auth_response = requests.post(
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({"error": "Missing Authorization token"}), 401
+
+        admin_check = requests.get(
+            f"{ADMIN_SERVICE_URL}/admin/check",
+            headers={"Authorization": token}
+        )
+
+        if admin_check.status_code != 200 or admin_check.json().get("message") != "User is an admin":
+            return jsonify({"error": "Forbidden", "message": "Admin access required"}), 403
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        user_id = data.get("quest_author")
+        if not user_id:
+            return jsonify({"error": "Missing quest_author"}), 400
+
+        user_info = requests.get(
             f"{AUTH_SERVICE_URL}/internal/users/usernames",
-            json={"user_ids": [data['quest_author']]},
+            json={"user_ids": [user_id]},
             headers={"INTERNAL-SECRET": INTERNAL_SECRET}
-        )
-        quest_author_data = auth_response.json()
-        quest_author_id = next(iter(quest_author_data.keys()))
-        quest_author_username = quest_author_data[quest_author_id]
+        ).json()
+
+        quest_author_username = user_info.get(user_id)
+        if not quest_author_username:
+            return jsonify({"error": "User lookup failed"}), 400
+
+        # Extract individual inputs and outputs (input_0 through input_9, same for output)
+        inputs = {}
+        outputs = {}
+        for i in range(10):
+            inputs[f"input_{i}"] = data.get(f"input_{i}", "")
+            outputs[f"output_{i}"] = data.get(f"output_{i}", "")
+
+        # Determine XP based on difficulty
+        difficulty = data["difficulty"]
+        xp = "30" if difficulty == "Easy" else "60" if difficulty == "Medium" else "100"
+
+        # Extract inputs and outputs (10 max)
+        inputs = {f"input_{i}": data.get(f"input_{i}", "") for i in range(10)}
+        outputs = {f"output_{i}": data.get(f"output_{i}", "") for i in range(10)}
+        
         new_quest = Quest(
-            language=data['language'],
-            difficulty=data['difficulty'],
-            quest_name=data['quest_name'],
+            language=data["language"],
+            difficulty=difficulty,
+            quest_name=data["quest_name"],
             quest_author=quest_author_username,
-            condition=data['condition'],
-            function_template=data['function_template'],
-            unit_tests=data['unit_tests'],
-            test_inputs=data.get('test_inputs'),
-            test_outputs=data.get('test_outputs'),
-            xp="30" if data['difficulty'] == "Easy" else "60" if data['difficulty'] == "Medium" else "100",
-            type=data.get('type')
+            condition=data["condition"],
+            function_template=data["function_template"],
+            example_solution=data.get("example_solution", ""),
+            xp=xp,
+            type=data.get("type", "Basic"),
         )
+
+        # Assign each individual test case input/output
+        for i in range(10):
+            setattr(new_quest, f"input_{i}", inputs[f"input_{i}"])
+            setattr(new_quest, f"output_{i}", outputs[f"output_{i}"])
+
         db.session.add(new_quest)
         db.session.commit()
-        return jsonify({"message": "Quest added successfully", "quest_id": new_quest.quest_id}), 201
+
+        return jsonify({
+            "message": "Quest added successfully",
+            "quest_id": new_quest.id,
+            "quest_name": new_quest.quest_name,
+        }), 201
+
     except Exception as e:
         db.session.rollback()
-        app.logger.exception(f"An error occurred while adding a new quest: {e}")
+        current_app.logger.exception(f"Failed to add quest: {e}")
         return jsonify({"error": GENERIC_ERROR_MESSAGE}), 500
+
 
 # Open a quest (as Admin)
 @quests_bp.route('/edit_quest/<quest_id>', methods=['GET'])
