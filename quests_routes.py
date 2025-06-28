@@ -128,12 +128,6 @@ def add_new_quest():
         if not quest_author_username:
             return jsonify({"error": "User lookup failed"}), 400
 
-        # Extract individual inputs and outputs (input_0 through input_9, same for output)
-        inputs = {}
-        outputs = {}
-        for i in range(10):
-            inputs[f"input_{i}"] = data.get(f"input_{i}", "")
-            outputs[f"output_{i}"] = data.get(f"output_{i}", "")
 
         # Determine XP based on difficulty
         difficulty = data["difficulty"]
