@@ -7,12 +7,12 @@ from sqlalchemy import text
 from models import Quest, ReportedQuest
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL")
 ADMIN_SERVICE_URL = os.getenv("ADMIN_SERVICE_URL")
 INTERNAL_SECRET = os.getenv("INTERNAL_SECRET")
+GENERIC_ERROR_MESSAGE = "An internal error has occurred."
 
 GENERIC_ERROR_MESSAGE = "An internal error has occurred."
 
