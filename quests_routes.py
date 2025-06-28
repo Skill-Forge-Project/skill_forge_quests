@@ -5,11 +5,13 @@ from services import token_required
 from sqlalchemy import text
 from models import Quest, ReportedQuest
 from dotenv import load_dotenv
+import app
 
 load_dotenv()
 
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL")
 INTERNAL_SECRET = os.getenv("INTERNAL_SECRET")
+GENERIC_ERROR_MESSAGE = "An internal error has occurred."
 
 quests_bp = Blueprint('quests', __name__)
 
