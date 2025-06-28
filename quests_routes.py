@@ -1,4 +1,4 @@
-import os, requests
+import os, requests, traceback
 from flask import Blueprint, request, jsonify, send_file
 from extensions import db
 from services import token_required
