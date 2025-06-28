@@ -4,6 +4,7 @@ from functools import wraps
 from flask import request, jsonify
 from dotenv import load_dotenv
 import logging
+import app
 
 logging.basicConfig(level=logging.ERROR)
 
