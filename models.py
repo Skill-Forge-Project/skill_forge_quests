@@ -54,16 +54,14 @@ class Quest(db.Model):
     
     
     
-    def __init__(self, language, difficulty, quest_name, quest_author, condition, function_template, unit_tests, test_inputs, test_outputs, xp, type):
+    def __init__(self, language, difficulty, quest_name, quest_author, condition, function_template, example_solution, xp, type):
         self.language = language
         self.difficulty = difficulty
         self.quest_name = quest_name
         self.quest_author = quest_author
         self.condition = condition
         self.function_template = function_template
-        self.unit_tests = unit_tests
-        self.test_inputs = test_inputs
-        self.test_outputs = test_outputs
+        self.example_solution = example_solution
         self.xp = xp
         self.type = type
 

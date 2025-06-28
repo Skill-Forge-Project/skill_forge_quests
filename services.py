@@ -23,7 +23,7 @@ def token_required(f):
         try:
             verify_jwt_in_request()
         except Exception as e:
-            app.logger.error(f"JWT verification failed: {e}")
+            app.logging.error(f"JWT verification failed: {e}")
             return jsonify({"error": "Unauthorized", "message": "Invalid token"}), 401
         return f(*args, **kwargs)
     return decorated
