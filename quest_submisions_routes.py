@@ -1,3 +1,4 @@
+import logging
 import uuid, os, requests, json
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
@@ -213,8 +214,7 @@ def get_user_solutions(user_id):
         
         return jsonify(solutions), 200
     except Exception as e:
-        import logging
-        logging.error("Error in get_user_solutions: %s", str(e))
+        logging.error("Error occurred while retrieving user solutions: %s", e, exc_info=True)
         return jsonify({"error": "An internal error has occurred."}), 500
 
 # Get all correct solutions by user_id
@@ -242,6 +242,5 @@ def get_quest_solutions(user_id):
         
         return jsonify(solutions), 200
     except Exception as e:
-        import logging
-        logging.error("Error in get_quest_solutions: %s", str(e))
+        logging.error("Error occurred while retrieving correct solutions: %s", e, exc_info=True)
         return jsonify({"error": "An internal error has occurred."}), 500
