@@ -213,7 +213,9 @@ def get_user_solutions(user_id):
         
         return jsonify(solutions), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("Error in get_user_solutions: %s", str(e))
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 # Get all correct solutions by user_id
 @quests_submissions_bp.route('/correct_solutions/<user_id>', methods=['GET'])
@@ -240,4 +242,6 @@ def get_quest_solutions(user_id):
         
         return jsonify(solutions), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("Error in get_quest_solutions: %s", str(e))
+        return jsonify({"error": "An internal error has occurred."}), 500
