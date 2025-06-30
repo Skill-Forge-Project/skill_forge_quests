@@ -168,31 +168,34 @@ def add_new_quest():
         current_app.logger.exception(f"Failed to add quest: {e}")
         return jsonify({"error": GENERIC_ERROR_MESSAGE}), 500
 
-
 # Open a quest (as Admin)
 @quests_bp.route('/edit_quest/<quest_id>', methods=['GET'])
 @token_required
 def open_edit_quest(quest_id):
-    """Get a specific quest by its ID for editing.
-
-    Args:
-        quest_id (str): Quest ID
-
-    Returns:
-        JSON: Quest details for editing
-    """
-
+    """Fetch a specific quest by its ID for editing."""
     try:
-        result = db.session.execute(text("SELECT * FROM coding_quests WHERE id = :quest_id"), {'quest_id': quest_id})
-        quest = result.fetchone()
+        token = request.headers.get('Authorization')
+        if not token:
+            return jsonify({"error": "Missing Authorization token"}), 401
+
+        admin_check = requests.get(
+            f"{ADMIN_SERVICE_URL}/admin/check",
+            headers={"Authorization": token}
+        )
+
+        if admin_check.status_code != 200 or admin_check.json().get("message") != "User is an admin":
+            return jsonify({"error": "Forbidden", "message": "Admin access required"}), 403
+        
+        
+        quest = Quest.query.filter_by(id=quest_id).first()
         if not quest:
             return jsonify({"error": "Quest not found"}), 404
-        
-        # Collect dynamic inputs and outputs (from input_0 to input_9 and output_0 to output_9)
-        inputs = [getattr(quest, f'input_{i}') for i in range(10) if getattr(quest, f'input_{i}') is not None]
-        outputs = [getattr(quest, f'output_{i}') for i in range(10) if getattr(quest, f'output_{i}') is not None]
-        
-        return jsonify({
+
+        # Format test case input/output fields individually
+        input_fields = {f"input_{i}": getattr(quest, f"input_{i}", "") for i in range(10)}
+        output_fields = {f"output_{i}": getattr(quest, f"output_{i}", "") for i in range(10)}
+
+        response_data = {
             "quest_id": quest.id,
             "language": quest.language,
             "difficulty": quest.difficulty,
@@ -203,16 +206,18 @@ def open_edit_quest(quest_id):
             "last_modified": quest.last_modified.isoformat() if quest.last_modified else None,
             "condition": quest.condition,
             "function_template": quest.function_template,
-            "inputs": inputs,
-            "outputs": outputs,
             "example_solution": quest.example_solution,
             "xp": quest.xp,
-            "type": quest.type
-        })
-        
+            "type": quest.type,
+            **input_fields,
+            **output_fields
+        }
+
+        return jsonify(response_data), 200
+
     except Exception as e:
-        app.logger.exception(f"An error occurred while fetching quest with ID {quest_id}: {e}")
-        return jsonify({"error": "An internal error has occurred"}), 500
+        current_app.logger.exception(f"Error retrieving quest {quest_id}: {e}")
+        return jsonify({"error": GENERIC_ERROR_MESSAGE}), 500
 
 # Edit a quest (as Admin) by its ID
 @quests_bp.route('/quests/<quest_id>', methods=['PUT'])
@@ -241,6 +246,7 @@ def edit_quest(quest_id):
         quest.difficulty = data.get('difficulty', quest.difficulty)
         quest.quest_name = data.get('quest_name', quest.quest_name)
         quest.condition = data.get('condition', quest.condition)
+        quest.function_template = data.get('function_template', quest.function_template)
         quest.example_solution = data.get('example_solution', quest.example_solution)
         quest.xp = "30" if quest.difficulty == "Easy" else "60" if quest.difficulty == "Medium" else "100"
         quest.type = data.get('type', quest.type)
