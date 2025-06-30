@@ -246,6 +246,7 @@ def edit_quest(quest_id):
         quest.difficulty = data.get('difficulty', quest.difficulty)
         quest.quest_name = data.get('quest_name', quest.quest_name)
         quest.condition = data.get('condition', quest.condition)
+        quest.function_template = data.get('function_template', quest.function_template)
         quest.example_solution = data.get('example_solution', quest.example_solution)
         quest.xp = "30" if quest.difficulty == "Easy" else "60" if quest.difficulty == "Medium" else "100"
         quest.type = data.get('type', quest.type)
