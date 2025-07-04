@@ -23,7 +23,9 @@ def get_comments():
         comments_list = [dict(row) for row in comments]
         return jsonify(comments_list), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("Error in get_comments: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 @comments_bp.route('/comments/<quest_id>', methods=['GET'])
 @token_required
@@ -60,7 +62,9 @@ def get_comments_by_quest(quest_id):
         return jsonify(comments), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("Error in get_comments_by_quest: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 @comments_bp.route('/comments/<quest_id>', methods=['POST'])
 @token_required
@@ -84,4 +88,6 @@ def add_comment(quest_id):
 
         return jsonify({"message": "Comment added successfully"}), 201
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("Error in add_comment: %s", e, exc_info=True)
+        return jsonify({"error": "An internal error has occurred"}), 500
