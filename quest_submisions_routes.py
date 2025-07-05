@@ -36,12 +36,12 @@ def quest_solution(quest_id):
     # Get the quest, code, language, and user_id from the request
     code = request.json.get('code')
     language = request.json.get('language')
-    quest_xp = db.session.query(Quest).filter_by(id=quest_id).first().xp
-    user_id = request.json.get('user_id')
-    
     quest = db.session.query(Quest).filter_by(id=quest_id).first()
     if not quest:
         return jsonify({"error": "Quest not found"}), 404
+    
+    quest_xp = quest.xp
+    user_id = request.json.get('user_id')
     
     # Max number of tests to run
     MAX_TESTS = 10
