@@ -58,6 +58,10 @@ def quest_solution(quest_id):
         input_attr = getattr(quest, f'input_{i}', None)
         output_attr = getattr(quest, f"output_{i}", None)
         
+        if not input_attr and not output_attr:
+            # If both input and output are None, break the loop
+            break
+        
         if language != 'javascript':
             data = {
                 "language": language,
