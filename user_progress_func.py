@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import jsonify
+from flask import jsonify, current_app
 
 
 
@@ -21,7 +21,7 @@ def update_xp(user_id, quest_xp):
                 "message": response.text
             }), response.status_code   
     except Exception as e:
-        logger.exception("Error communicating with users service")
+        current_app.logger.exception("Error communicating with users service")
         return jsonify({
             "error": "Internal server error",
             "message": "An internal error has occurred."
