@@ -1,5 +1,5 @@
 import logging
-import uuid, os, requests, json, re
+import uuid, os, requests
 from dotenv import load_dotenv
 from flask import Blueprint, request, jsonify
 from extensions import db
