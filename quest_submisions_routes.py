@@ -69,7 +69,7 @@ def quest_solution(quest_id):
                         "content": code
                     }
                 ],
-                "stdin": input_attr,
+                "stdin": ", ". join([x for x in input_attr.split(', ') if x.strip()]),
                 "args": [],
                 "compile_timeout": 5000,
                 "run_timeout": 2000,
@@ -77,26 +77,25 @@ def quest_solution(quest_id):
                 "run_memory_limit": -1
             }
         else:
-            function_name = re.search(r'function\s+(\w+)\s*\(', code)
-            print(f"Function name found: {function_name.group(1) if function_name else 'None'}")
+            # function_name = re.search(r'function\s+(\w+)\s*\(', code)
             data = {
                 "language": language,
                 "version": "*",
                 "files": [
                     {
                         "name": f"{user_id}_{quest_id}.{language}",
-                        "content": code + '\n' + f"console.log({function_name.group(1)}(process.argv[2]));"
+                        "content": code
                     }
                 ],
                 "stdin": "",
-                "args": [input_attr],
+                "args": [x for x in input_attr.split(', ') if x.strip()],
                 "compile_timeout": 5000,
                 "run_timeout": 2000,
                 "compile_memory_limit": -1,
                 "run_memory_limit": -1,
                 "execution_id": execution_id
             }
-            print(code + '\n' + f"{function_name.group(1)}(process.argv[2]);")
+            
         
         # Send the code to the Piston API for execution
         exec_url = os.getenv("PISTON_API_URL") + '/api/v2/execute'
