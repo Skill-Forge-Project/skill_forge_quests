@@ -174,7 +174,7 @@ def quest_solution(quest_id):
             language=language,
             tests_passed=successful_tests,
             tests_failed=unsuccessful_tests,
-            is_solved=(successful_tests == i)
+            is_solved=(successful_tests == MAX_TESTS)
         )
         db.session.add(new_solution)
         db.session.commit()
