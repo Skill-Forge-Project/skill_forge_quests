@@ -17,8 +17,8 @@ class Quest(db.Model):
     quest_name = db.Column(db.String(255), nullable=False)
     solved_times = db.Column(db.Integer, default=0, nullable=True)
     quest_author = db.Column(db.String(255), nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.now, nullable=False)
-    last_modified = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    date_added = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
+    last_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp(), nullable=False)
     condition = db.Column(db.Text, nullable=False)
     function_template = db.Column(db.Text, nullable=False)
     
@@ -77,7 +77,7 @@ class ReportedQuest(db.Model):
     quest_id = db.Column(db.String(256), db.ForeignKey('coding_quests.id'), nullable=False)
     user_id = db.Column(db.String(256), nullable=False)  # User UUID
     reason = db.Column(db.Text, nullable=False)
-    date_reported = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    date_reported = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
 
     def __init__(self, quest_id, user_id, reason):
         self.quest_id = quest_id
@@ -100,7 +100,7 @@ class QuestSolution(db.Model):
     tests_passed = db.Column(db.Integer, default=0, nullable=False)
     tests_failed = db.Column(db.Integer, default=0, nullable=False)
     is_solved = db.Column(db.Boolean, default=False, nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    date_added = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
 
 
     def __init__(self, quest_id, user_id, code, language, tests_passed=0, tests_failed=0, is_solved=False):
@@ -124,7 +124,7 @@ class QuestComment(db.Model):
     quest_id = db.Column(db.String(256), db.ForeignKey('coding_quests.id'), nullable=False)
     user_id = db.Column(db.String(256), nullable=False)  # User UUID
     comment = db.Column(db.Text, nullable=False)
-    date_added = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    date_added = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
 
     def __init__(self, quest_id, user_id, comment):
         self.quest_id = quest_id
