@@ -57,7 +57,6 @@ def quest_solution(quest_id):
     for i in range(MAX_TESTS):
         input_attr = getattr(quest, f'input_{i}', None)
         output_attr = getattr(quest, f"output_{i}", None)
-        print(f"Running test {i+1} with input: {input_attr} and expected output: {output_attr}")
         
         if language != 'javascript':
             data = {
@@ -77,7 +76,6 @@ def quest_solution(quest_id):
                 "run_memory_limit": -1
             }
         else:
-            # function_name = re.search(r'function\s+(\w+)\s*\(', code)
             data = {
                 "language": language,
                 "version": "*",
@@ -100,8 +98,6 @@ def quest_solution(quest_id):
         # Send the code to the Piston API for execution
         exec_url = os.getenv("PISTON_API_URL") + '/api/v2/execute'
         response = requests.post(exec_url, json=data)
-        
-        print("Data sent to Piston API:", json.dumps(data, indent=2))
         
         # Check if the response is successful and process the results
         if response.status_code == 200:
