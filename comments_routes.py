@@ -39,7 +39,6 @@ def get_comments_by_quest(quest_id):
             .order_by(QuestComment.date_added.desc())
             .all()
         )
-        print(comments)
     
         # Step 2: Extract unique user_ids
         user_ids = list({comment.user_id for comment in comments})
