@@ -72,7 +72,7 @@ def quest_solution(quest_id):
                         "content": code
                     }
                 ],
-                "stdin": ", ". join([x for x in input_attr.split(', ') if x.strip()]),
+                "stdin": "\n". join([x for x in input_attr.split(', ') if x.strip()]),
                 "args": [],
                 "compile_timeout": 5000,
                 "run_timeout": 2000,
@@ -90,7 +90,7 @@ def quest_solution(quest_id):
                     }
                 ],
                 "stdin": "",
-                "args": [x for x in input_attr.split(', ') if x.strip()],
+                "args": [", ".join([x for x in input_attr.split(', ') if x.strip()])],
                 "compile_timeout": 5000,
                 "run_timeout": 2000,
                 "compile_memory_limit": -1,
