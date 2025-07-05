@@ -44,7 +44,7 @@ def get_comments_by_quest(quest_id):
         user_ids = list({comment.user_id for comment in comments})
         
         # Step 3: Call auth service to get usernames
-        auth_response = requests.get(
+        auth_response = requests.post(
             f"{AUTH_SERVICE_URL}/internal/users/usernames",
             json={"user_ids": user_ids},
             headers={"INTERNAL-SECRET": INTERNAL_SECRET}
